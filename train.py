@@ -1,3 +1,4 @@
+import hydra.experimental
 import torch
 torch.backends.cuda.matmul.allow_tf32 = True
 import torch.nn as nn
@@ -40,15 +41,14 @@ def worker_main(rank: int, world_size: int, config: DictConfig, policy: nn.Modul
     TrainerClass = getattr(trainers, config.trainer)
     print(f'Creating trainer on process {rank} with world size {world_size}')
     trainer = TrainerClass(policy, config, config.seed, config.local_run_dir, reference_model=reference_model, rank=rank, world_size=world_size)
-
     trainer.train()
     trainer.save()
+    
 
 
 @hydra.main(version_base=None, config_path="config", config_name="config")
 def main(config: DictConfig):
     """Main entry point for training. Validates config, creates/initializes model(s), and kicks off worker process(es)."""
-
     # Resolve hydra references, e.g. so we don't re-compute the run directory
     OmegaConf.resolve(config)
 
