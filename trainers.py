@@ -358,7 +358,9 @@ class BasicTrainer(object):
             start_time = time.time()
             batch_metrics = defaultdict(list)
             for microbatch_idx in range(self.config.gradient_accumulation_steps):
+                # 先按gradient_accumulation_steps分组
                 global_microbatch = slice_and_move_batch_for_device(batch, microbatch_idx, self.config.gradient_accumulation_steps, self.rank)
+                # 再按设备数分组，两次细分batch_size, act_batch = batch_size/gradient_accumulation_steps/world_size
                 local_microbatch = slice_and_move_batch_for_device(global_microbatch, self.rank, self.world_size, self.rank)
                 loss, metrics = self.get_batch_metrics(local_microbatch, self.config.loss, train=True)
                 (loss / self.config.gradient_accumulation_steps).backward()

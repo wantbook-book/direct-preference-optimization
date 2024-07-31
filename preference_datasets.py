@@ -268,6 +268,8 @@ def tokenize_batch_element(prompt: str, chosen: str, rejected: str, truncation_m
     batch['chosen_response_only'] = chosen
     batch['rejected_response_only'] = rejected
 
+
+    # chosen_attention_mask, chosen_input_ids, chosen_labels...
     for k, toks in {'chosen': chosen_sequence_tokens, 'rejected': rejected_sequence_tokens, 'prompt': prompt_tokens}.items():
         for type_key, tokens in toks.items():
             if type_key == 'token_type_ids':

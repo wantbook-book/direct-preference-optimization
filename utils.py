@@ -84,7 +84,7 @@ def all_gather_if_needed(values: torch.Tensor, rank: int, world_size: int) -> to
     """Gather and stack/cat values from all processes, if there are multiple processes."""
     if world_size == 1:
         return values
-
+    # 应该是根据device设备，填到对应位置
     all_values = [torch.empty_like(values).to(rank) for _ in range(world_size)]
     dist.all_gather(all_values, values)
     cat_function = torch.cat if values.dim() > 0 else torch.stack
